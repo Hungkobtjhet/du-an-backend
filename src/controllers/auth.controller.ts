@@ -68,4 +68,56 @@ export class AuthController {
             role: user.role
         });
     }
+
+    /**
+     * Register a new user
+     */
+    static async register(req: Request, res: Response, next: NextFunction) {
+        const { first_name, last_name, email, password, role } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required.' });
+        }
+
+        try {
+            // Check existing user
+            const existing = await prisma.users.findUnique({
+                where: { email },
+            });
+
+            if (existing) {
+                return res.status(409).json({ message: 'Email already in use.' });
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const newUser = await prisma.users.create({
+                data: {
+                    first_name: first_name ?? null,
+                    last_name: last_name ?? null,
+                    email,
+                    password: hashedPassword,
+                    role: role ?? 'user',
+                    status: 1 // default to active; adjust if you require activation flow
+                }
+            });
+
+            // Auto-login after registration
+            req.logIn(newUser, (err: any) => {
+                if (err) return next(err);
+                return res.status(201).json({
+                    message: 'Registered successfully.',
+                    user: {
+                        id: newUser.id.toString(),
+                        email: newUser.email,
+                        first_name: newUser.first_name,
+                        last_name: newUser.last_name,
+                        role: newUser.role
+                    }
+                });
+            });
+        } catch (error: any) {
+            return res.status(500).json({ message: error.message });
+        }
+    }
 }

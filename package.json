@@ -9,7 +9,9 @@
     "start": "node dist/app.js"
   },
   "nodemonConfig": {
-    "watch": ["src"],
+    "watch": [
+      "src"
+    ],
     "ext": "ts",
     "exec": "tsx src/app.ts"
   },

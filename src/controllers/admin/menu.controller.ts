@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import prisma from '../../models/db.js';
 
 export class AdminMenuController {
@@ -7,7 +7,11 @@ export class AdminMenuController {
             const menus = await prisma.menus.findMany({
                 include: { categories: true },
             });
-            res.json(menus);
+            // Convert BigInt to String before sending JSON (để tránh lỗi serialization nếu còn sót BigInt)
+            const responseData = JSON.parse(JSON.stringify(menus, (key, value) =>
+                typeof value === 'bigint' ? value.toString() : value
+            ));
+            res.json(responseData);
         } catch (error: any) {
             res.status(500).json({ message: error.message });
         }
@@ -21,11 +25,12 @@ export class AdminMenuController {
                     name,
                     description,
                     price: parseFloat(price),
-                    category_id: BigInt(category_id),
-                    image: image || '',
+                    // QUAN TRỌNG: Đổi BigInt thành Number vì DB đã đổi sang Int
+                    category_id: Number(category_id),
+                    image: image || '', // Hiện tại chỉ nhận String (Link ảnh)
                 },
             });
-            res.status(212).json(menu);
+            res.status(201).json(menu); // Đổi 212 thành 201 (Created) cho chuẩn
         } catch (error: any) {
             res.status(500).json({ message: error.message });
         }
@@ -36,12 +41,14 @@ export class AdminMenuController {
         const { name, description, price, category_id, image } = req.body;
         try {
             const menu = await prisma.menus.update({
+                // QUAN TRỌNG: Đổi BigInt(id) thành Number(id)
                 where: { id: Number(id) },
                 data: {
                     name,
                     description,
                     price: price ? parseFloat(price) : undefined,
-                    category_id: category_id ? BigInt(category_id) : undefined,
+                    // QUAN TRỌNG: Đổi BigInt thành Number
+                    category_id: category_id ? Number(category_id) : undefined,
                     image,
                 },
             });
@@ -55,7 +62,7 @@ export class AdminMenuController {
         const { id } = req.params;
         try {
             await prisma.menus.delete({
-                where: { id: Number(id) },
+                where: { id: Number(id) }, // QUAN TRỌNG: Đổi BigInt thành Number
             });
             res.json({ message: 'Menu deleted successfully.' });
         } catch (error: any) {
