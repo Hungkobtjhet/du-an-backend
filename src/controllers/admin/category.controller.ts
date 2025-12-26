@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import prisma from '../../models/db.js';
 
 export class AdminCategoryController {
@@ -17,7 +17,8 @@ export class AdminCategoryController {
             const category = await prisma.categories.create({
                 data: { name },
             });
-            res.status(212).json(category);
+            // Mã 201 là chuẩn quốc tế cho việc "Tạo mới thành công"
+            res.status(201).json(category);
         } catch (error: any) {
             res.status(500).json({ message: error.message });
         }
@@ -28,7 +29,8 @@ export class AdminCategoryController {
         const { name } = req.body;
         try {
             const category = await prisma.categories.update({
-                where: { id: BigInt(id) },
+                // QUAN TRỌNG: Đổi BigInt(id) thành Number(id)
+                where: { id: Number(id) },
                 data: { name },
             });
             res.json(category);
@@ -41,7 +43,8 @@ export class AdminCategoryController {
         const { id } = req.params;
         try {
             await prisma.categories.delete({
-                where: { id: BigInt(id) },
+                // QUAN TRỌNG: Đổi BigInt(id) thành Number(id)
+                where: { id: Number(id) },
             });
             res.json({ message: 'Category deleted successfully.' });
         } catch (error: any) {

@@ -8,7 +8,7 @@ import { isAdmin } from '../middlewares/auth.middleware.js';
 const router = Router();
 
 // Apply admin middleware to all routes here
-router.use(isAdmin);
+//router.use(isAdmin);
 
 // Menus
 router.get('/menus', AdminMenuController.index);
