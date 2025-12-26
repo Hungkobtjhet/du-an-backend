@@ -31,7 +31,7 @@ export class AdminOrderController {
         const { id } = req.params;
         try {
             const order = await prisma.orders.findUnique({
-                where: { id: BigInt(id) },
+                where: { id: Number(id) },
                 include: {
                     customers: true,
                     order_items: true
@@ -50,7 +50,7 @@ export class AdminOrderController {
         const { status } = req.body; // 'pending', 'completed', 'cancelled'
         try {
             const order = await prisma.orders.update({
-                where: { id: BigInt(id) },
+                where: { id: Number(id) },
                 data: { status }
             });
 

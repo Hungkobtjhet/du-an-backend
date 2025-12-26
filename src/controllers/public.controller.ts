@@ -57,7 +57,7 @@ export class PublicController {
 
         try {
             const menu = await prisma.menus.findUnique({
-                where: { id: BigInt(id) },
+                where: { id: Number(id) },
                 include: { categories: true },
             });
 
@@ -65,7 +65,7 @@ export class PublicController {
                 return res.status(404).json({ message: 'Menu item not found.' });
             }
 
-            const relatedMenus = await prisma.$queryRaw`SELECT * FROM menus WHERE id != ${BigInt(id)} ORDER BY RAND() LIMIT 5`;
+            const relatedMenus = await prisma.$queryRaw`SELECT * FROM menus WHERE id != ${Number(id)} ORDER BY RAND() LIMIT 5`;
 
             res.json({
                 menu,

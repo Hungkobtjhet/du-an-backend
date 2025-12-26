@@ -29,7 +29,7 @@ export class AdminCategoryController {
         const { name } = req.body;
         try {
             const category = await prisma.categories.update({
-                // QUAN TRỌNG: Đổi BigInt(id) thành Number(id)
+                // QUAN TRỌNG: Đổi Number(id) thành Number(id)
                 where: { id: Number(id) },
                 data: { name },
             });
@@ -43,7 +43,7 @@ export class AdminCategoryController {
         const { id } = req.params;
         try {
             await prisma.categories.delete({
-                // QUAN TRỌNG: Đổi BigInt(id) thành Number(id)
+                // QUAN TRỌNG: Đổi Number(id) thành Number(id)
                 where: { id: Number(id) },
             });
             res.json({ message: 'Category deleted successfully.' });

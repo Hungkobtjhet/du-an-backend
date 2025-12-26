@@ -36,7 +36,7 @@ export class AdminMenuController {
         const { name, description, price, category_id, image } = req.body;
         try {
             const menu = await prisma.menus.update({
-                where: { id: BigInt(id) },
+                where: { id: Number(id) },
                 data: {
                     name,
                     description,
@@ -55,7 +55,7 @@ export class AdminMenuController {
         const { id } = req.params;
         try {
             await prisma.menus.delete({
-                where: { id: BigInt(id) },
+                where: { id: Number(id) },
             });
             res.json({ message: 'Menu deleted successfully.' });
         } catch (error: any) {
