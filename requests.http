@@ -1,0 +1,40 @@
+### Helper to Test API
+@baseUrl = http://localhost:3000/api
+
+### 1. Test Server Root
+GET http://localhost:3000/
+
+### 2. Test Public Menu (No Auth)
+GET {{baseUrl}}/public/menu
+
+### 3. Test Login (To get Token)
+# Bạn cần thay đổi email/password cho đúng user trong DB
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "password"
+}
+
+### 4. Test Admin Get Menus (Need Auth)
+# Sau khi login, copy token vào header Authorization bên dưới
+GET {{baseUrl}}/admin/menus
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### 5. Test Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "first_name": "Test",
+    "last_name": "User",
+    "email": "testuser@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+
+### 6. Test Get Current User (Me)
+# Sau khi login, cookie session sẽ được tự động lưu (nếu dùng REST Client hoặc Postman có bật Cookie Jar)
+# Hoặc nếu API dùng Bearer Token, hãy thêm header Authorization
+GET {{baseUrl}}/auth/me
